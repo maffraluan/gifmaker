@@ -4,7 +4,7 @@
  > This is a simple app using axios for fetch api from Giphy. And display all return gifs with pagination. You can save and delete the gif you liked it.
 
 ### Develop
-> `git clone && cd /registration-for` <br>
+> `git clone && cd /giphy` <br>
 > [yarn](https://yarnpkg.com/) install or [npm](https://www.npmjs.com/) install to download all the dependecies. <br>
 > `yarn start or npm start to run the app.`
 
