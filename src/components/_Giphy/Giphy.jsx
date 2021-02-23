@@ -1,6 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
 
-import { Loader } from '../_Loader/Loader';
 import { Paginate } from '../_Pagination/Pagination';
 
 import useFetchGifs from '../../utils/useFetchGif';
@@ -8,6 +7,7 @@ import useFetchGifs from '../../utils/useFetchGif';
 export function Giphy() {
   const [query, setQuery] = useState('');
   const [pageNumber, setPageNumber] = useState(1);
+  const [savedGif, setSavedGif] = useState([]);
 
   const { loading, error, gifs, hasMore } = useFetchGifs(query, pageNumber);
 
@@ -29,53 +29,32 @@ export function Giphy() {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = gifs.slice(indexOfFirstItem, indexOfLastItem);
 
-  const renderGifs = () => {
-    if (loading) {
-      return <Loader />;
-    }
-    return currentItems.map((gif, index) => {
-      if (gifs.length === index + 1) {
-        return (
-          <div key={gif.id} ref={lastGifElement}>
-            <div className="card" style={{ width: '18rem' }}>
-              <img className="card-img-top" src={gif.images.fixed_height.url} alt="Gifs" />
-              <div className="card-body">
-                <h5 className="card-title">{gif.title}</h5>
-                <p className="card-text">{gif?.user?.description}</p>
-                <p className="card-text">{gif?.user?.display_name}</p>
-              </div>
-            </div>
-          </div>
-        );
-      } else {
-        return (
-          <div key={gif.id}>
-            <div className="card" style={{ width: '18rem' }}>
-              <img className="card-img-top" src={gif.images.fixed_height.url} alt="Gifs" />
-              <div className="card-body">
-                <h5 className="card-title">{gif.title}</h5>
-                <p className="card-text">{gif?.user?.description}</p>
-                <p className="card-text">{gif?.user?.display_name}</p>
-                <button className="btn btn-primary ml-2">Salvar</button>
-              </div>
-            </div>
-          </div>
-        );
-      }
-    });
+  const saveGifs = (id) => {
+    if (!id) return;
+    setSavedGif(id);
   };
 
-  const renderError = () => {
-    if (error) {
+  const renderGifs = () => {
+    return currentItems.map((gif) => {
       return (
-        <div
-          className="alert alert-danger alert-dismissible fade show"
-          role="alert"
-        >
-          Tente novamente...
+        <div key={gif.id} ref={lastGifElement}>
+          <div className="card" style={{ width: '18rem' }}>
+            <img className="card-img-top" src={gif.images.fixed_height.url} alt="Gifs" />
+            <div className="card-body">
+              <h5 className="card-title">{gif.title}</h5>
+              <p className="card-text">{gif?.user?.description}</p>
+              <p className="card-text">{gif?.user?.display_name}</p>
+              <button
+                onClick={() => saveGifs(gif.id)}
+                className="btn btn-primary ml-2">
+                Salvar
+              </button>
+            </div>
+          </div>
         </div>
-      );
+      )
     }
+    )
   };
 
   const handleSearchChange = e => {
@@ -90,7 +69,6 @@ export function Giphy() {
 
   return (
     <div className="m-2">
-      {renderError()}
       <form className="form-inline justify-content-center m-2">
         <input
           value={query}
@@ -99,12 +77,8 @@ export function Giphy() {
           placeholder="Procurar Gif"
           className="form-control"
         />
-        <button
-          onClick={() => { }}
-          type="submit"
-          className="btn btn-primary mx-2"
-        >
-          Procurar
+        <button type="button" className="btn btn-primary ml-2">
+          Salvos {savedGif}
         </button>
       </form>
       <Paginate
